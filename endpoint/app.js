@@ -1,7 +1,7 @@
 const express = require("express");
 const { topicsController } = require('../controllers/topicsController.js');
 const { getApi } = require("../controllers/apiController.js");
-const { articlesController } = require("../controllers/articlesController.js");
+const {getArticlesByIdController, getAllArticles } = require("../controllers/articlesController.js");
 
 const app = express();
 
@@ -9,7 +9,9 @@ app.get('/api/topics',topicsController)
 
 app.get('/api',getApi)
 
-app.get('/api/articles/:article_id',articlesController)
+app.get('/api/articles/:article_id',getArticlesByIdController)
+
+app.get('/api/articles',getAllArticles)
 
 app.all('*',(req,response,next) => {
     next({

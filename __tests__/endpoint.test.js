@@ -4,6 +4,7 @@ const db = require("../db/connection");
 const seed = require("../db/seeds/seed.js");
 const request = require("supertest");
 const endpointsData = require('../endpoints.json')
+const comments = require('../db/data/test-data/comments.js')
 
 beforeAll(() => seed(data));
 afterAll(() => db.end());
@@ -49,7 +50,7 @@ describe('/api', () => {
       });
 })
 describe('/api/articles/:article_id', () => {
-    test("GET:200 sends an array of topics to the client", () => {
+    test("GET:200 sends an array of articles to the client", () => {
         return request(app)
         .get("/api/articles/1")
         .expect(200)
@@ -84,4 +85,56 @@ describe('/api/articles/:article_id', () => {
         expect(body.msg).toBe('bad request');
         });
     });
+})
+describe('/api/articles', () => {
+    test("GET:200 sends an array of articles to the client", () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then(({body}) => {
+            expect(body.articles.length).toBe(13);
+            body.articles.forEach((article) => {
+              expect(typeof article.article_id).toBe("number");
+              expect(typeof article.title).toBe("string");
+              expect(typeof article.topic).toBe("string");
+              expect(typeof article.author).toBe("string");
+              expect(typeof article.comment_count).toBe("string");
+              expect(typeof article.created_at).toBe("string");
+              expect(typeof article.votes).toBe("number");
+              expect(typeof article.article_img_url).toBe("string");
+            });
+          });
+      });
+      test('GET:200 orders articles by date in descending order', () => {
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then(({body}) => {
+            expect(body.articles).toBeSortedBy('created_at',{descending:true})
+          })
+      })
+      test('GET:200 comment_count property contains the number of comments that reference article_id', () => {
+        const commentCountObject = {}
+        comments.forEach((comment) => {
+            let {article_id} = comment
+            if(!commentCountObject[article_id]){
+                commentCountObject[article_id] = 1
+            }else{
+                commentCountObject[article_id]++
+            }
+        })
+
+        return request(app)
+          .get("/api/articles")
+          .expect(200)
+          .then(({body}) => {
+            const {articles} = body
+            console.log(articles)
+            articles.forEach((article) => {
+                if(article.comment_count != '0'){
+                    expect(article.comment_count).toBe(String(commentCountObject[article.article_id]))
+                }
+            })
+          })
+      })
 })

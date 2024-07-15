@@ -1,9 +1,9 @@
-const { selectArticles } = require("../models/articlesModel")
+const { selectArticlesById, selectAllArticles} = require("../models/articlesModel")
 
 
-function articlesController(request,response,next){
+function getArticlesByIdController(request,response,next){
     const {article_id} = request.params
-    selectArticles(article_id)
+    selectArticlesById(article_id)
     .then((article) => {
         response.status(200).send({article})
     })
@@ -12,4 +12,14 @@ function articlesController(request,response,next){
     })
 }
 
-module.exports = {articlesController}
+function getAllArticles(request,response,next){
+    selectAllArticles()
+    .then((articles) => {
+        response.status(200).send({articles}) 
+    })
+    .catch((err) => {
+        console.log(err)
+    })
+}
+
+module.exports = {getArticlesByIdController,getAllArticles}

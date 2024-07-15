@@ -42,4 +42,6 @@ function selectAllArticles(){
     })
 }
 
+
+
 module.exports = {selectAllArticles,selectArticlesById}

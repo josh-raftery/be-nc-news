@@ -12,9 +12,9 @@ describe('/api/topics', () => {
       return request(app)
         .get("/api/topics")
         .expect(200)
-        .then((response) => {
+        .then(({body}) => {
           expect(response.body.topics.length).toBe(3);
-          response.body.topics.forEach((topic) => {
+          body.topics.forEach((topic) => {
             expect(typeof topic.description).toBe("string");
             expect(typeof topic.slug).toBe("string");
           });

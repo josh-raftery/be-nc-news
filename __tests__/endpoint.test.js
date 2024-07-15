@@ -138,3 +138,45 @@ describe('/api/articles', () => {
           })
       })
 })
+describe('/api/articles/:article_id/comments', () => {
+    test("GET:200 sends an array of comments to the client with an article_id of 1", () => {
+        return request(app)
+          .get("/api/articles/1/comments")
+          .expect(200)
+          .then(({body}) => {
+            expect(body.comments.length).toBe(11);
+            body.comments.forEach((comment) => {
+              expect(comment.article_id).toBe(1);
+              expect(typeof comment.comment_id).toBe("number");
+              expect(typeof comment.votes).toBe("number");
+              expect(typeof comment.author).toBe("string");
+              expect(typeof comment.body).toBe("string");
+              expect(typeof comment.created_at).toBe("string");
+            });
+        });
+    });
+    test('GET:404 sends an appropriate status and error message when given a valid but non-existent id', () => {
+    return request(app)
+        .get('/api/articles/999/comments')
+        .expect(404)
+        .then(({body}) => {
+        expect(body.msg).toBe('comments not found');
+        });
+    });
+    test('GET:400 sends an appropriate status and error message when given an invalid id data-type', () => {
+    return request(app)
+        .get('/api/articles/not-a-number/comments')
+        .expect(400)
+        .then(({body}) => {
+        expect(body.msg).toBe('bad request');
+        });
+    });
+    test('GET:200 array is sorted with most recent comments first', () => {
+        return request(app)
+          .get("/api/articles/1/comments")
+          .expect(200)
+          .then(({body}) => {
+            expect(body.comments).toBeSortedBy('created_at')
+          })
+    })
+})

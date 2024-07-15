@@ -1,6 +1,5 @@
 const { selectArticlesById, selectAllArticles} = require("../models/articlesModel")
 
-
 function getArticlesByIdController(request,response,next){
     const {article_id} = request.params
     selectArticlesById(article_id)

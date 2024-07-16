@@ -1,22 +1,26 @@
 const db = require("../db/connection.js");
+const { checkArticleIdExists } = require("../db/seeds/utils.js");
 
 function selectCommentsByArticleId(article_id){
-    return db.query(
+    const promisesArray = []
+    promisesArray.push(db.query(
         `SELECT * 
         FROM comments 
         WHERE article_id=$1
         ORDER BY created_at
         ;`
-    ,[article_id])
+    ,[article_id]))
 
-    .then(({rows}) => {
-        if(rows.length === 0){
+    promisesArray.push(checkArticleIdExists(article_id))
+
+    return Promise.all(promisesArray)
+    .then(([{rows}, articleIdExists]) => {
+        if(rows.length === 0 && !articleIdExists){
             return Promise.reject({
                 status: 404,
                 msg: "comments not found"
             })
         }
-        console.log(rows)
         return rows
     })
 }

@@ -85,6 +85,101 @@ describe("/api/articles/:article_id", () => {
         expect(body.msg).toBe("bad request");
       });
   });
+  test('PATCH:200 Updates an article comment and responds with the patched article', () => {
+    const requestData = {
+      "inc_votes": 1,
+    }
+    const expectedReponse = {
+      article_id: 1,
+      title: "Living in the shadow of a great man",
+      topic: "mitch",
+      author: "butter_bridge",
+      body: "I find this existence challenging",
+      created_at: "2020-07-09T20:11:00.000Z",
+      votes: 100,
+      article_img_url:
+        "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+    }
+
+    expectedReponse.votes += requestData.inc_votes
+
+    return request(app)
+    .patch('/api/articles/1')
+    .send(requestData)
+    .expect(200)
+    .then(({body}) => {
+      expect(body.article).toEqual(expectedReponse)
+    });
+  })
+  test('PATCH:200 Updates an article comment and responds with the patched article - handling a decrement of votes not just an increment', () => {
+    const requestData = {
+      "inc_votes": -50,
+    }
+    const expectedReponse = {
+      author: 'icellusedkars',
+      body: "Having run out of ideas for articles, I am staring at the wall blankly, like a cat. Does this make me a cat?",
+      title: 'Am I a cat?',
+      article_id: 11,
+      topic: 'mitch',
+      created_at: '2020-01-15T22:21:00.000Z',
+      votes: 0,
+      article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+    }
+
+    expectedReponse.votes += requestData.inc_votes
+
+    return request(app)
+    .patch('/api/articles/11')
+    .send(requestData)
+    .expect(200)
+    .then(({body}) => {
+      expect(body.article).toEqual(expectedReponse)
+    });
+  })
+  test("PATCH:404 sends an appropriate status and error message when given a valid but non-existent id", () => {
+  return request(app)
+    .patch("/api/articles/999")
+    .send({
+      "inc_votes": 1,
+    })
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toBe("article not found");
+    });
+  });
+  test("PATCH:400 sends an appropriate status and error message when given an invalid id data-type", () => {
+    return request(app)
+      .patch("/api/articles/not-a-number")
+      .send({
+        "inc_votes": 1,
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test('PATCH:400 sends an appropriate status and error message when given an invalid inc_votes data-type', () => {
+    return request(app)
+      .patch("/api/articles/not-a-number")
+      .expect(400)
+      .send({
+        "inc_votes": "one"
+      })
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  })
+  test('PATCH:400 sends an appropriate status and error message when given an invalid request body', () => {
+    return request(app)
+      .patch("/api/articles/not-a-number")
+      .expect(400)
+      .send({
+        "body": "test body"
+      })
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  })
 });
 describe("/api/articles", () => {
   test("GET:200 sends an array of articles to the client", () => {

@@ -5,6 +5,7 @@ const seed = require("../db/seeds/seed.js");
 const request = require("supertest");
 const endpointsData = require("../endpoints.json");
 const comments = require("../db/data/test-data/comments.js");
+const usersData = require("../db/data/test-data/users.js")
 
 beforeAll(() => seed(data));
 afterAll(() => db.end());
@@ -390,4 +391,14 @@ describe('/api/comments/:comment_id', () => {
          expect(response.body.msg).toBe('comment not found');
        });
    });
+})
+describe('/api/users', () => {
+  test("GET:200 sends an array of topics to the client", () => {
+    return request(app)
+      .get("/api/users")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.users).toEqual(usersData)
+      })
+  });
 })

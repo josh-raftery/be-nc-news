@@ -1,4 +1,9 @@
 {
+  "DELETE /api/comments/:comment_id":{
+    "description": "deletes and responds with a status cod eof 204 and no content in the response body",
+    "queries": [],
+    "exampleResponse": {}
+  },
   "PATCH /api/articles/article_id":{
     "description": "updates and responds with an article object, corresponding with the article_id provided in the URL",
     "queries": [],

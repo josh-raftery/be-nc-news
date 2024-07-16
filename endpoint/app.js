@@ -2,7 +2,7 @@ const express = require("express");
 const { topicsController } = require('../controllers/topicsController.js');
 const { getApi } = require("../controllers/apiController.js");
 const {getArticleById, getAllArticles, patchArticle} = require("../controllers/articlesController.js");
-const { getCommentsByArticleId, postComment } = require("../controllers/commentsControllers.js");
+const { getCommentsByArticleId, postComment, removeComment } = require("../controllers/commentsControllers.js");
 
 const app = express();
 app.use(express.json());
@@ -19,6 +19,8 @@ app.get('/api/articles',getAllArticles)
 app.get('/api/articles/:article_id/comments', getCommentsByArticleId)
 app.post("/api/articles/:article_id/comments",postComment)
 
+app.delete('/api/comments/:comment_id',removeComment)
+
 app.all('*',(req,response,next) => {
     next({
         status: 404,
@@ -28,7 +30,7 @@ app.all('*',(req,response,next) => {
 
 app.use((err, req, res, next) => {
     if (err.code === '23503') {
-      res.status(400).send({ msg: 'foreign key violation' });
+      res.status(404).send({ msg: 'foreign key violation' });
     }
     next(err);
 });

@@ -301,6 +301,25 @@ describe("/api/articles/:article_id/comments", () => {
      expect(body.comment.comment_id).toBe(comments.length + 1);
    });
   })
+  test('POST:201 Inserts a new comment and ignores unecessary properties', () => {
+    const requestData = {
+      "body": "Test post - insightful comment",
+      "author": "icellusedkars",
+      "votes": 100
+    }
+    return request(app)
+    .post('/api/articles/4/comments')
+    .send(requestData)
+    .expect(201)
+    .then(({body}) => {
+      expect(body.comment.body).toBe(requestData.body);
+      expect(body.comment.votes).toBe(0);
+      expect(body.comment.author).toBe(requestData.author);
+      expect(body.comment.article_id).toBe(4);
+      expect(typeof body.comment.created_at).toBe('string');
+      expect(body.comment.comment_id).toBe(comments.length + 2);
+    });
+   })
   test('POST:400 responds with an appropriate status and error message when provided with a bad comment (no body)', () => {
     return request(app)
       .post("/api/articles/1/comments")
@@ -312,14 +331,14 @@ describe("/api/articles/:article_id/comments", () => {
         expect(response.body.msg).toBe('bad request');
       });
   });
-  test('POST:400 responds with an appropriate status and error message when given an invalid author(not referenced in users)', () => {
+  test('POST:404 responds with an appropriate status and error message when given an invalid author(not referenced in users)', () => {
     return request(app)
       .post("/api/articles/1/comments")
       .send({
         "body": "Test post - insightful comment",
         "author": "joshr",
       })
-      .expect(400)
+      .expect(404)
       .then((response) => {
         expect(response.body.msg).toBe('foreign key violation');
       });
@@ -349,3 +368,26 @@ describe("/api/articles/:article_id/comments", () => {
       });
   });
 });
+describe('/api/comments/:comment_id', () => {
+  test('DELETE:204 Deletes a comment and responds with no content', () => {
+    return request(app)
+    .delete('/api/comments/4')
+    .expect(204)
+   })
+   test('DELETE:400 responds with an appropriate status and error message when provided with an invalid comment_id data-type', () => {
+     return request(app)
+       .delete("/api/comments/not-a-number")
+       .expect(400)
+       .then((response) => {
+         expect(response.body.msg).toBe('bad request');
+       });
+   });
+   test('DELETE:404 responds with an appropriate status and error message when given a valid but non-existant comment_id', () => {
+     return request(app)
+       .delete("/api/comments/999")
+       .expect(404)
+       .then((response) => {
+         expect(response.body.msg).toBe('comment not found');
+       });
+   });
+})

@@ -25,4 +25,34 @@ function selectCommentsByArticleId(article_id){
     })
 }
 
-module.exports = {selectCommentsByArticleId}
+function insertComment(request,article_id){
+    const {body,author} = request
+
+    if(!body || !author){
+        return Promise.reject({ status: 400, msg: "bad request" });
+    }
+
+    return checkArticleIdExists(article_id)
+    .then((exists) => {
+        if(!exists){
+            return Promise.reject({
+                status: 404,
+                msg: "article not found"
+            })
+        }
+        return db.query(
+            `INSERT INTO comments 
+            (body,author,article_id)
+            VALUES
+            ($1,$2,$3)
+            RETURNING *
+            ;`
+        ,[body,author,article_id])
+    })
+    .then(({rows}) => {
+        return rows[0]
+    })
+
+}
+
+module.exports = {selectCommentsByArticleId,insertComment}

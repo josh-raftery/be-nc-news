@@ -1,6 +1,6 @@
-const { selectCommentsByArticleId } = require("../models/commentsModels")
+const { selectCommentsByArticleId, insertComment } = require("../models/commentsModels")
 
-function getCommentsByArticleIdController(request,response,next){
+function getCommentsByArticleId(request,response,next){
     const {article_id} = request.params
     selectCommentsByArticleId(article_id)
     .then((comments) => {
@@ -11,4 +11,16 @@ function getCommentsByArticleIdController(request,response,next){
     })
 }
 
-module.exports = {getCommentsByArticleIdController}
+function postComment(request,response,next){
+    const {body} = request
+    const {article_id} = request.params
+    insertComment(body,article_id)
+    .then((comment) => {
+        response.status(201).send({comment})
+    })
+    .catch((err) => {
+        next(err)
+    })
+}
+
+module.exports = {getCommentsByArticleId,postComment}

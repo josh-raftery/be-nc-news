@@ -37,7 +37,6 @@ function selectAllArticles(){
         ;`
     )
     .then(({rows}) => {
-        //console.log(rows, ' rows')
         return rows
     })
 }

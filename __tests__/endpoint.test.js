@@ -188,26 +188,69 @@ describe("/api/articles/:article_id/comments", () => {
         expect(body.comments).toBeSortedBy("created_at");
       });
   });
-  // this is for task 7, will uncomment after task 6 refactor!
-  //test('GET:201 Inserts a new comment and responds with the posted comment', () => {
-  //  const requestData = {
-  //    "body": "Test post - insightful comment",
-  //    "votes": 99,
-  //    "author": "joshr",
-  //    "article_id": 4,
-  //    "created_at": 158302518065300,
-  //  }
-  //  return request(app)
-  //  .post('/api/teams')
-  //  .send(newTeam)
-  //  .expect(201)
-  //  .then(({body}) => {
-  //    expect(body.comment.body).toBe(requestData.body);
-  //    expect(body.comment.votes).toBe(requestData.votes);
-  //    expect(body.comment.author).toBe(requestData.author);
-  //    expect(body.comment.article_id).toBe(requestData.article_id);
-  //    expect(body.comment.created_at).toBe(requestData.created_at);
-  //    expect(body.comment.comment_id).toBe(comments.length);
-  //  });
-  //})
+  test('POST:201 Inserts a new comment and responds with the posted comment', () => {
+   const requestData = {
+     "body": "Test post - insightful comment",
+     "author": "icellusedkars",
+   }
+   return request(app)
+   .post('/api/articles/4/comments')
+   .send(requestData)
+   .expect(201)
+   .then(({body}) => {
+     expect(body.comment.body).toBe(requestData.body);
+     expect(body.comment.votes).toBe(0);
+     expect(body.comment.author).toBe(requestData.author);
+     expect(body.comment.article_id).toBe(4);
+     expect(typeof body.comment.created_at).toBe('string');
+     expect(body.comment.comment_id).toBe(comments.length + 1);
+   });
+  })
+  test('POST:400 responds with an appropriate status and error message when provided with a bad comment (no body)', () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        "author": "icellusedkars",
+      })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe('bad request');
+      });
+  });
+  test('POST:400 responds with an appropriate status and error message when given an invalid author(not referenced in users)', () => {
+    return request(app)
+      .post("/api/articles/1/comments")
+      .send({
+        "body": "Test post - insightful comment",
+        "author": "joshr",
+      })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe('foreign key violation');
+      });
+  });
+  test("POST:400 sends an appropriate status and error message when given an invalid id data-type", () => {
+    return request(app)
+      .post("/api/articles/not-a-number/comments")
+      .send({
+        "body": "Test post - insightful comment",
+        "author": "icellusedkars",
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test("POST:404 sends an appropriate status and error message when given a type-integer but non-existent id", () => {
+    return request(app)
+      .post("/api/articles/999/comments")
+      .send({
+        "body": "Test post - insightful comment",
+        "author": "icellusedkars",
+      })
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe("article not found");
+      });
+  });
 });

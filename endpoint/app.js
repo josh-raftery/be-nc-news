@@ -2,9 +2,10 @@ const express = require("express");
 const { topicsController } = require('../controllers/topicsController.js');
 const { getApi } = require("../controllers/apiController.js");
 const {getArticlesByIdController, getAllArticles} = require("../controllers/articlesController.js");
-const { getCommentsByArticleIdController } = require("../controllers/commentsControllers.js");
+const { getCommentsByArticleId, postComment } = require("../controllers/commentsControllers.js");
 
 const app = express();
+app.use(express.json());
 
 app.get('/api/topics',topicsController)
 
@@ -14,13 +15,21 @@ app.get('/api/articles/:article_id',getArticlesByIdController)
 
 app.get('/api/articles',getAllArticles)
 
-app.get('/api/articles/:article_id/comments', getCommentsByArticleIdController)
+app.get('/api/articles/:article_id/comments', getCommentsByArticleId)
+app.post("/api/articles/:article_id/comments",postComment)
 
 app.all('*',(req,response,next) => {
     next({
         status: 404,
         msg: "invalid endpoint"
     })
+});
+
+app.use((err, req, res, next) => {
+    if (err.code === '23503') {
+      res.status(400).send({ msg: 'foreign key violation' });
+    }
+    next(err);
 });
 
 app.use((err, req, res, next) => {

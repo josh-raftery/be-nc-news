@@ -17,7 +17,6 @@ function getAllArticles(request,response,next){
         response.status(200).send({articles}) 
     })
     .catch((err) => {
-        console.log(err)
     })
 }
 

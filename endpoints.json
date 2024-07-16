@@ -1,4 +1,13 @@
 {
+  "GET /api/users":{
+    "description": "Responds with an array of all the user objects",
+    "queries": [],
+    "exampleResponse": {
+      "username": "butter_bridge",
+      "name": "jonny",
+      "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+    }
+  },
   "DELETE /api/comments/:comment_id":{
     "description": "deletes and responds with a status cod eof 204 and no content in the response body",
     "queries": [],

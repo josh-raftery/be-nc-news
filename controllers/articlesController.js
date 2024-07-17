@@ -12,9 +12,16 @@ function getArticleById(request,response,next){
 }
 
 function getAllArticles(request,response,next){
-    selectAllArticles()
+    const {query} = request
+    const {sort_by} = request.query
+    const {order} = request.query
+
+    selectAllArticles(query,sort_by,order)
     .then((articles) => {
         response.status(200).send({articles}) 
+    })
+    .catch((err) => {
+        next(err)
     })
 }
 

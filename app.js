@@ -1,28 +1,11 @@
 const express = require("express");
-const { topicsController } = require('./controllers/topicsController.js');
-const { getApi } = require("./controllers/apiController.js");
-const {getArticleById, getAllArticles, patchArticle} = require("./controllers/articlesController.js");
-const { getCommentsByArticleId, postComment, removeComment } = require("./controllers/commentsControllers.js");
-const { getAllUsers } = require("./controllers/usersControllers.js");
 
 const app = express();
 app.use(express.json());
 
-app.get('/api/topics',topicsController)
+const apiRouter = require("./routers/api-router");
 
-app.get('/api',getApi)
-
-app.get('/api/articles/:article_id',getArticleById)
-app.patch('/api/articles/:article_id',patchArticle)
-
-app.get('/api/articles',getAllArticles)
-
-app.get('/api/articles/:article_id/comments', getCommentsByArticleId)
-app.post("/api/articles/:article_id/comments",postComment)
-
-app.delete('/api/comments/:comment_id',removeComment)
-
-app.get('/api/users',getAllUsers)
+app.use("/api", apiRouter);
 
 app.all('*',(req,response,next) => {
     next({

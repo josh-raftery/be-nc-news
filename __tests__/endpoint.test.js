@@ -67,9 +67,30 @@ describe("/api/articles/:article_id", () => {
           votes: 100,
           article_img_url:
             "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          comment_count: 11
         });
-      });
+    });
   });
+  test('GET:200 We still recieve an array of articles when comment count is 0 - test the join', () => {
+
+    return request(app)
+    .get("/api/articles/7")
+    .expect(200)
+    .then(({ body }) => {
+      const { article } = body;
+      expect(article).toEqual({
+        author: 'icellusedkars',
+        body: "I was hungry.",
+        title: 'Z',
+        article_id: 7,
+        topic: 'mitch',
+        created_at: "2020-01-07T14:08:00.000Z",
+        votes: 0,
+        article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+        comment_count: 0
+      })
+    })
+  })
   test("GET:404 sends an appropriate status and error message when given a valid but non-existent id", () => {
     return request(app)
       .get("/api/articles/999")

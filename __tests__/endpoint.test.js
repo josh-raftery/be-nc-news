@@ -194,7 +194,7 @@ describe("/api/articles", () => {
           expect(typeof article.title).toBe("string");
           expect(typeof article.topic).toBe("string");
           expect(typeof article.author).toBe("string");
-          expect(typeof article.comment_count).toBe("string");
+          expect(typeof article.comment_count).toBe("number");
           expect(typeof article.created_at).toBe("string");
           expect(typeof article.votes).toBe("number");
           expect(typeof article.article_img_url).toBe("string");
@@ -226,14 +226,119 @@ describe("/api/articles", () => {
       .then(({ body }) => {
         const { articles } = body;
         articles.forEach((article) => {
-          if (article.comment_count != "0") {
+          if (article.comment_count != 0) {
             expect(article.comment_count).toBe(
-              String(commentCountObject[article.article_id])
+              commentCountObject[article.article_id]
             );
           }
         });
       });
   });
+  test('GET:200 Response is sorted by title when title is provided in the query', () => {
+    return request(app)
+    .get("/api/articles?sort_by=title")
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.articles.length).toBe(13)
+      expect(body.articles).toBeSortedBy("title", { descending: true });
+    })
+  })
+  test('GET:200 Response is sorted by topic when topic is provided in the query', () => {
+    return request(app)
+    .get("/api/articles?sort_by=topic")
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.articles.length).toBe(13)
+      expect(body.articles).toBeSortedBy("topic", { descending: true });
+    })
+  })
+  test('GET:200 Response is sorted by author when author is provided in the query', () => {
+    return request(app)
+    .get("/api/articles?sort_by=author")
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.articles.length).toBe(13)
+      expect(body.articles).toBeSortedBy("author", { descending: true });
+    })
+  })
+  test('GET:200 Response is sorted by votes when votes is provided in the query', () => {
+    return request(app)
+    .get("/api/articles?sort_by=votes")
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.articles.length).toBe(13)
+      expect(body.articles).toBeSortedBy("votes", { descending: true });
+    })
+  })
+  test('GET:200 Response is sorted by article_img_url when article_img_url is provided in the query', () => {
+    return request(app)
+    .get("/api/articles?sort_by=article_img_url")
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.articles.length).toBe(13)
+      expect(body.articles).toBeSortedBy("article_img_url", { descending: true });
+    })
+  })
+  test('GET:200 Response is sorted by article_id when article_id is provided in the query', () => {
+    return request(app)
+    .get("/api/articles?sort_by=article_id")
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.articles.length).toBe(13)
+      expect(body.articles).toBeSortedBy("article_id", { descending: true });
+    })
+  })
+  test('GET:200 Response is sorted by comment_count when comment_count is provided in the query', () => {
+    return request(app)
+    .get("/api/articles?sort_by=comment_count")
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.articles.length).toBe(13)
+      expect(body.articles).toBeSortedBy("comment_count", { descending: true });
+    })
+  })
+  test('GET:200 Response is sorted by created_at in descending order, when "desc" is specified in the order query', () => {
+    return request(app)
+    .get("/api/articles?order=desc")
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.articles.length).toBe(13)
+      expect(body.articles).toBeSortedBy("created_at", { descending: true });
+    })
+  })
+  test('GET:200 Response is ordered by ascending if it is specified in the query and the function can handle 2 queries', () => {
+    return request(app)
+    .get("/api/articles?order=asc&sort_by=title")
+    .expect(200)
+    .then(({ body }) => {
+      expect(body.articles.length).toBe(13)
+      expect(body.articles).toBeSortedBy("title", { descending: false });
+    })
+  })
+  test('GET:404 Response message of not found if query is not a valid column', () => {
+    return request(app)
+    .get("/api/articles?sort_by=invalid-column")
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toEqual('not found')
+    })
+  })
+  test('GET:404 Response message of not found if query is not a valid ordering criteria', () => {
+    return request(app)
+    .get("/api/articles?order=invalid-order")
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toEqual('not found')
+    })
+  })
+  test('GET:400 Appropriate error message when a query-type other that "sort_by" or "order is specified"', () => {
+    return request(app)
+    .get("/api/articles?ord=asc")
+    .expect(400)
+    .then(({ body }) => {
+      expect(body.msg).toEqual('bad request')
+    })
+  })
 });
 describe("/api/articles/:article_id/comments", () => {
   test("GET:200 sends an array of comments to the client with an article_id of 1", () => {
@@ -341,7 +446,7 @@ describe("/api/articles/:article_id/comments", () => {
       })
       .expect(404)
       .then((response) => {
-        expect(response.body.msg).toBe('foreign key violation');
+        expect(response.body.msg).toBe('not found');
       });
   });
   test("POST:400 sends an appropriate status and error message when given an invalid id data-type", () => {

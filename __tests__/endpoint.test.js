@@ -1,4 +1,4 @@
-const app = require("../endpoint/app.js");
+const app = require("../app.js");
 const data = require("../db/data/test-data");
 const db = require("../db/connection");
 const seed = require("../db/seeds/seed.js");

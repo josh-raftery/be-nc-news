@@ -4,8 +4,9 @@ const db = require("../db/connection");
 const seed = require("../db/seeds/seed.js");
 const request = require("supertest");
 const endpointsData = require("../endpoints.json");
-const comments = require("../db/data/test-data/comments.js");
+const commentsData = require("../db/data/test-data/comments.js");
 const usersData = require("../db/data/test-data/users.js")
+const articlesData = ("../db/data/test-data/articles.js")
 
 beforeAll(() => seed(data));
 afterAll(() => db.end());
@@ -258,7 +259,7 @@ describe("/api/articles", () => {
   });
   test("GET:200 comment_count property contains the number of comments that reference article_id", () => {
     const commentCountObject = {};
-    comments.forEach((comment) => {
+    commentsData.forEach((comment) => {
       let { article_id } = comment;
       if (!commentCountObject[article_id]) {
         commentCountObject[article_id] = 1;
@@ -386,7 +387,172 @@ describe("/api/articles", () => {
       expect(body.msg).toEqual('bad request')
     })
   })
-});
+  test('POST:201 Inserts a new article and responds with the posted article', () => {
+    const requestData = {
+      author: 'icellusedkars',
+      title: 'Z',
+      topic: 'mitch',
+      body: 'test post',
+      article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+    }
+    return request(app)
+    .post('/api/articles')
+    .send(requestData)
+    .expect(201)
+    .then(({body}) => {
+      expect(body.article.body).toBe(requestData.body);
+      expect(body.article.topic).toBe(requestData.topic);
+      expect(body.article.article_img_url).toBe(requestData.article_img_url);
+      expect(body.article.title).toBe(requestData.title);
+      expect(typeof body.article.votes).toBe('number');
+      expect(body.article.author).toBe(requestData.author);
+      expect(typeof body.article.created_at).toBe('string');
+      expect(typeof body.article.article_id).toBe('number');
+      expect(typeof body.article.comment_count).toBe('number');
+      
+    });
+   })
+   test('POST:201 Inserts a new article and responds with the posted article, ignoring additional properties', () => {
+    const requestData = {
+      author: 'icellusedkars',
+      title: 'Z',
+      topic: 'mitch',
+      body: 'test post',
+      article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+      article_id: 1,
+    }
+    return request(app)
+    .post('/api/articles')
+    .send(requestData)
+    .expect(201)
+    .then(({body}) => {
+      expect(body.article.body).toBe(requestData.body);
+      expect(body.article.topic).toBe(requestData.topic);
+      expect(body.article.article_img_url).toBe(requestData.article_img_url);
+      expect(body.article.title).toBe(requestData.title);
+      expect(typeof body.article.votes).toBe('number');
+      expect(body.article.author).toBe(requestData.author);
+      expect(typeof body.article.created_at).toBe('string');
+      expect(typeof body.article.article_id).toBe('number');
+      expect(typeof body.article.comment_count).toBe('number');
+      
+    });
+   })
+   test('POST:201 Inserts a new article and responds with the posted article when no article_img_url is provided', () => {
+    const requestData = {
+      author: 'icellusedkars',
+      title: 'Z',
+      topic: 'mitch',
+      body: 'test post',
+    }
+    return request(app)
+    .post('/api/articles')
+    .send(requestData)
+    .expect(201)
+    .then(({body}) => {
+      expect(body.article.body).toBe(requestData.body);
+      expect(body.article.topic).toBe(requestData.topic);
+      expect(typeof body.article.article_img_url).toBe('string');
+      expect(body.article.title).toBe(requestData.title);
+      expect(typeof body.article.votes).toBe('number');
+      expect(body.article.author).toBe(requestData.author);
+      expect(typeof body.article.created_at).toBe('string');
+      expect(typeof body.article.article_id).toBe('number');
+      expect(typeof body.article.comment_count).toBe('number');
+      
+    });
+   })
+   test('POST:400 responds with an appropriate status and error message when provided with a bad comment (no body)', () => {
+     return request(app)
+       .post("/api/articles")
+       .send({
+        author: 'icellusedkars',
+        title: 'Z',
+        topic: 'mitch',
+        article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+      })
+       .expect(400)
+       .then((response) => {
+         expect(response.body.msg).toBe('bad request');
+       });
+   });
+
+   test('POST:404 responds with an appropriate status and error message when given an invalid author(not referenced in users)', () => {
+     return request(app)
+       .post("/api/articles")
+       .send({
+          author: 'josh',
+          title: 'Z',
+          topic: 'mitch',
+          body: 'test post',
+          article_img_url: 'https://images.pexels.com/photos/158651/  news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+         })
+       .expect(404)
+       .then((response) => {
+         expect(response.body.msg).toBe('not found');
+       });
+   });
+   test('POST:400 responds with an appropriate status and error message when provided an invalid value data-type for title', () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+       author: 'icellusedkars',
+       body: "Test post - insightful comment",
+       title: 1,
+       topic: 'mitch',
+       article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+     })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe('bad request');
+      });
+  });
+  test('POST:400 responds with an appropriate status and error message when provided an invalid value data-type for body', () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+       author: 'icellusedkars',
+       title: 'Z',
+       body: 1,
+       topic: 'mitch',
+       article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+     })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe('bad request');
+      });
+  });
+  test('POST:400 responds with an appropriate status and error message when provided an invalid value data-type for topic', () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+       author: 'icellusedkars',
+       title: 'Z',
+       body: "Test post - insightful comment",
+       topic: 1,
+       article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700'
+     })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe('bad request');
+      });
+  });
+  test('POST:400 responds with an appropriate status and error message when provided an invalid value data-type for article_img_url', () => {
+    return request(app)
+      .post("/api/articles")
+      .send({
+       author: 'icellusedkars',
+       title: 'Z',
+       body: "Test post - insightful comment",
+       topic: 'mitch',
+       article_img_url: 1
+     })
+      .expect(400)
+      .then((response) => {
+        expect(response.body.msg).toBe('bad request');
+      });
+  });
+})
 describe("/api/articles/:article_id/comments", () => {
   test("GET:200 sends an array of comments to the client with an article_id of 1", () => {
     return request(app)
@@ -451,7 +617,7 @@ describe("/api/articles/:article_id/comments", () => {
      expect(body.comment.author).toBe(requestData.author);
      expect(body.comment.article_id).toBe(4);
      expect(typeof body.comment.created_at).toBe('string');
-     expect(body.comment.comment_id).toBe(comments.length + 1);
+     expect(body.comment.comment_id).toBe(commentsData.length + 1);
    });
   })
   test('POST:201 Inserts a new comment and ignores unecessary properties', () => {
@@ -470,7 +636,7 @@ describe("/api/articles/:article_id/comments", () => {
       expect(body.comment.author).toBe(requestData.author);
       expect(body.comment.article_id).toBe(4);
       expect(typeof body.comment.created_at).toBe('string');
-      expect(body.comment.comment_id).toBe(comments.length + 2);
+      expect(body.comment.comment_id).toBe(commentsData.length + 2);
     });
    })
   test('POST:400 responds with an appropriate status and error message when provided with a bad comment (no body)', () => {

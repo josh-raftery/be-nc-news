@@ -86,6 +86,70 @@ function updateArticle(inc_votes,article_id){
     })
 }
 
+function insertArticle(requestBody,author,title,body,topic,article_img_url){
 
+    if(!author || !title || !body || !topic){
+        return Promise.reject({
+            status: 400,
+            msg: "bad request"
+        })
+    }
 
-module.exports = {selectAllArticles,selectArticlesById,updateArticle}
+    const columnsToCheck = ['author','title','body','topic','article_img_url']
+    let number = false
+
+    columnsToCheck.forEach((column) => {
+        if(Number(requestBody[column])){
+            number = true   
+        }
+    })
+
+    if(number){
+        return Promise.reject({
+            status: 400,
+            msg: "bad request"
+        })
+    }
+
+    const values = [author,title,body,topic]
+    const output = []
+
+    let sqlQueryString = `INSERT INTO articles `
+        
+
+    if(article_img_url){
+        sqlQueryString += 
+        `(author,title,body,topic,article_img_url) 
+        VALUES 
+        ($1,$2,$3,$4,$5) ` 
+        values.push(article_img_url)
+    }else{
+        sqlQueryString += 
+        `(author,title,body,topic) 
+        VALUES 
+        ($1,$2,$3,$4) `
+    }
+
+    sqlQueryString +=   `RETURNING *;`
+
+    return db.query(sqlQueryString,values)
+    .then(({rows}) => {
+        output.push(rows[0])
+        return db.query(
+            `SELECT
+            COUNT(comments.article_id)::INT AS comment_count 
+            FROM articles
+            LEFT JOIN comments
+            ON comments.article_id = articles.article_id
+            WHERE articles.article_id = $1 
+            GROUP BY articles.article_id 
+        ;`
+        ,[rows[0].article_id])
+    })
+    .then(({rows}) => {
+        output[0].comment_count = rows[0].comment_count
+        return output[0]
+    })
+}
+
+module.exports = {selectAllArticles,selectArticlesById,updateArticle,insertArticle}

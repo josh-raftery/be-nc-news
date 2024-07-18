@@ -1,4 +1,4 @@
-const { selectArticlesById, selectAllArticles, updateArticle} = require("../models/articlesModel")
+const { selectArticlesById, selectAllArticles, updateArticle, insertArticle} = require("../models/articlesModel")
 
 function getArticleById(request,response,next){
     const {article_id} = request.params
@@ -37,4 +37,16 @@ function patchArticle(request,response,next){
     })
 }
 
-module.exports = {getArticleById,getAllArticles,patchArticle}
+function postArticle(request,response,next){
+    const requestBody = request.body
+    const {author,title,body,topic,article_img_url} = requestBody
+    insertArticle(requestBody,author,title,body,topic,article_img_url)
+    .then((article) => {
+        response.status(201).send({article}) 
+    })
+    .catch((err) => {
+        next(err)
+    })
+}
+
+module.exports = {getArticleById,getAllArticles,patchArticle,postArticle}

@@ -158,6 +158,32 @@ describe("/api/articles/:article_id", () => {
       expect(body.article).toEqual(expectedReponse)
     });
   })
+  test('PATCH:200 Updates an article comment and responds with the patched article - ignoring additional request properies', () => {
+    const requestData = {
+      "inc_votes": -50,
+      body: "new body"
+    }
+    const expectedReponse = {
+      author: "butter_bridge",
+      body: "Have you seen the size of that thing?",
+      created_at: "2020-10-11T11:24:00.000Z",
+      title: "Moustache",
+      article_id: 12,
+      topic: 'mitch',
+      votes: 0,
+      article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
+    }
+
+    expectedReponse.votes += requestData.inc_votes
+
+    return request(app)
+    .patch('/api/articles/12')
+    .send(requestData)
+    .expect(200)
+    .then(({body}) => {
+      expect(body.article).toEqual(expectedReponse)
+    });
+  })
   test("PATCH:404 sends an appropriate status and error message when given a valid but non-existent id", () => {
   return request(app)
     .patch("/api/articles/999")
@@ -182,7 +208,7 @@ describe("/api/articles/:article_id", () => {
   });
   test('PATCH:400 sends an appropriate status and error message when given an invalid inc_votes data-type', () => {
     return request(app)
-      .patch("/api/articles/not-a-number")
+      .patch("/api/articles/1")
       .expect(400)
       .send({
         "inc_votes": "one"
@@ -517,6 +543,120 @@ describe('/api/comments/:comment_id', () => {
          expect(response.body.msg).toBe('comment not found');
        });
    });
+   test('PATCH:200 Updates a comment and responds with the patched comment', () => {
+    const requestData = {
+      "inc_votes": 1,
+    }
+    const expectedReponse = {
+      comment_id: 2,
+      body: 'The beautiful thing about treasure is that it exists. Got to find out what kind of sheets these are; not cotton, not rayon, silky.',
+      article_id: 1,
+      author: 'butter_bridge',
+      votes: 14,
+      created_at: "2020-10-31T03:03:00.000Z"
+    }
+
+    expectedReponse.votes += requestData.inc_votes
+
+    return request(app)
+    .patch('/api/comments/2')
+    .send(requestData)
+    .expect(200)
+    .then(({body}) => {
+      expect(body.comment).toEqual(expectedReponse)
+    });
+  })
+  test('PATCH:200 Updates a comment and responds with the patched comment - handling a decrement of votes not just an increment', () => {
+    const requestData = {
+      "inc_votes": -50,
+    }
+    const expectedReponse = {
+      comment_id: 3,
+      body: 'Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.',
+      article_id: 1,
+      author: 'icellusedkars',
+      votes: 100,
+      created_at: "2020-03-01T01:13:00.000Z"
+    }
+
+    expectedReponse.votes += requestData.inc_votes
+
+    return request(app)
+    .patch('/api/comments/3')
+    .send(requestData)
+    .expect(200)
+    .then(({body}) => {
+      expect(body.comment).toEqual(expectedReponse)
+    });
+  })
+  test('PATCH:200 Updates a comment and responds with the patched comment - ignoring additional properties in the request', () => {
+    const requestData = {
+      "inc_votes": -50,
+      "body": 'new body'
+    }
+    const expectedReponse = {
+      comment_id: 1,
+      article_id: 9,
+      author: "butter_bridge",
+      body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
+      created_at: "2020-04-06T12:17:00.000Z",
+      votes: 16,
+    }
+
+    expectedReponse.votes += requestData.inc_votes
+
+    return request(app)
+    .patch('/api/comments/1')
+    .send(requestData)
+    .expect(200)
+    .then(({body}) => {
+      expect(body.comment).toEqual(expectedReponse)
+    });
+  })
+  test("PATCH:404 sends an appropriate status and error message when given a valid but non-existent id", () => {
+  return request(app)
+    .patch("/api/comments/999")
+    .send({
+      "inc_votes": 1,
+    })
+    .expect(404)
+    .then(({ body }) => {
+      expect(body.msg).toBe("comment not found");
+    });
+  });
+  test("PATCH:400 sends an appropriate status and error message when given an invalid id data-type", () => {
+    return request(app)
+      .patch("/api/comments/not-a-number")
+      .send({
+        "inc_votes": 1,
+      })
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  });
+  test('PATCH:400 sends an appropriate status and error message when given an invalid inc_votes data-type', () => {
+    return request(app)
+      .patch("/api/comments/1")
+      .expect(400)
+      .send({
+        "inc_votes": "one"
+      })
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  })
+  test('PATCH:400 sends an appropriate status and error message when given an invalid request body', () => {
+    return request(app)
+      .patch("/api/comments/not-a-number")
+      .expect(400)
+      .send({
+        "body": "test body"
+      })
+      .then(({ body }) => {
+        expect(body.msg).toBe("bad request");
+      });
+  })
 })
 describe('/api/users', () => {
   test("GET:200 sends an array of topics to the client", () => {

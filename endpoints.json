@@ -147,7 +147,7 @@
   },
   "GET /api/articles": {
     "description": "serves an array of all articles",
-    "queries": ["author", "topic", "sort_by", "order","title","article_id","created_at","votes","article_img_url","comment_count"],
+    "queries": ["author", "topic", "sort_by", "order","title","article_id","created_at","votes","article_img_url","comment_count","limit","p"],
     "exampleResponse": {
       "articles": [
         {

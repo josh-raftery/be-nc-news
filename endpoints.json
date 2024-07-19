@@ -1,4 +1,12 @@
 {
+  "POST /api/topics":{
+    "description": "Inserts topic to the articles table then responds with the comment object",
+    "queries": [],
+    "exampleResponse": {
+      "description": "not cats",
+      "slug": "dogs"
+  }
+  },
   "POST /api/articles":{
     "description": "Inserts article to the carticles table then responds with the comment object",
     "queries": [],

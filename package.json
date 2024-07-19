@@ -7,7 +7,7 @@
     "setup-dbs": "psql -f ./db/setup.sql",
     "seed": "node ./db/seeds/run-seed.js",
     "test": "jest",
-    "prepare": "npm install husky",
+    "prepare": "husky install || true",
     "dev": "nodemon listen.js",
     "start": "node listen.js",
     "seed-prod": "NODE_ENV=production npm run seed"

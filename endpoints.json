@@ -1,16 +1,33 @@
 {
-  "DELETE /api/articles/:article_id":{
-    "description": "Detesle article, corresponding with id provided in the parametric request, also deletes all comments referencing the article, no response body.",
-    "queries": [],
-    "exampleResponse": {}
-  },
-  "POST /api/topics":{
-    "description": "Inserts topic to the articles table then responds with the comment object",
+  "GET /api": {
+    "description": "serves up a json representation of all the available endpoints of the api",
     "queries": [],
     "exampleResponse": {
-      "description": "not cats",
-      "slug": "dogs"
-  }
+      "GET /api/topics": {
+        "description": "serves an array of all topics",
+        "queries": [],
+        "exampleResponse": {
+          "topics": [{ "slug": "football", "description":     "Footie!" }]
+        }
+      }
+    }
+  },
+  "GET /api/articles": {
+    "description": "serves an array of all articles",
+    "queries": ["author", "topic", "sort_by", "order","title","article_id","created_at","votes","article_img_url","comment_count","limit","p"],
+    "exampleResponse": {
+      "articles": [
+        {
+          "title": "Seafood substitutions are increasing",
+          "topic": "cooking",
+          "author": "weegembump",
+          "body": "Text from the article..",
+          "created_at": "2018-05-30T15:59:13.341Z",
+          "votes": 0,
+          "comment_count": 6
+        }
+      ]
+    }
   },
   "POST /api/articles":{
     "description": "Inserts article to the carticles table then responds with the comment object",
@@ -25,42 +42,26 @@
       "votes": 0,
       "article_img_url": "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
       "comment_count": 0
-  }
-  },
-  "PATCH /api/comments/:comment_id":{
-    "description": "Updates comment corresponding with the comment_id provided in the parametric endpoint, updates db, then responds with the comment object",
-    "queries": [],
-    "exampleResponse":{
-      "comment_id": 3,
-      "body": "Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.",
-      "article_id": 1,
-      "author": "icellusedkars",
-      "votes": 50,
-      "created_at": "2020-03-01T01:13:00.000Z"
     }
   },
-  "GET /api/users/:username":{
-    "description": "Responds with a user object corresponding with the username provided in the parametric endpoint",
-    "queries": [],
-    "exampleResponse":{
-      "username": "lurker",
-      "name": "do_nothing",
-      "avatar_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
-    }
-  },
-  "GET /api/users":{
-    "description": "Responds with an array of all the user objects",
+  "GET /api/articles/:article_id": {
+    "description": "serves up an article object, corresponding with the article_id provided in the URL",
     "queries": [],
     "exampleResponse": {
-      "username": "butter_bridge",
-      "name": "jonny",
-      "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+      "GET /api/topics": {
+        "description": "serves an array of all topics",
+        "queries": [],
+        "exampleResponse": {
+          "article_id": 1,
+          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+          "author": "butter_bridge", 
+          "body": "I find this existence challenging", "created_at": 
+          "2020-07-09T20:11:00.000Z", 
+          "title": "Living in the shadow of a great man", "topic": "mitch", 
+          "votes": 100
+        }
+      }
     }
-  },
-  "DELETE /api/comments/:comment_id":{
-    "description": "deletes and responds with a status cod eof 204 and no content in the response body",
-    "queries": [],
-    "exampleResponse": {}
   },
   "PATCH /api/articles/article_id":{
     "description": "updates and responds with an article object, corresponding with the article_id provided in the URL",
@@ -83,23 +84,10 @@
       }
     }
   },
-  "POST /api/articles/:article_id/comments":{
-    "description": "inserts and responds with a comment object, corresponding with the article_id provided in the URL",
+  "DELETE /api/articles/:article_id":{
+    "description": "Detesle article, corresponding with id provided in the parametric request, also deletes all comments referencing the article, no response body.",
     "queries": [],
-    "exampleResponse": {
-      "GET /api/topics": {
-        "description": "serves an array of comments for a specified article_id",
-        "queries": [],
-        "exampleResponse": {
-          "comment_id": 19,
-          "body": "Test post - insightful comment",
-          "article_id": 4,
-          "author": "icellusedkars",
-          "votes": 0,
-          "created_at": "2024-07-16T11:05:49.233Z"
-        }
-      }
-    }
+    "exampleResponse": {}
   },
   "GET /api/articles/:article_id/comments": {
     "description": "serves up an article object, corresponding with the article_id provided in the URL",
@@ -119,36 +107,57 @@
       }
     }
   },
-  "GET /Api/articles/:article_id": {
-    "description": "serves up an article object, corresponding with the article_id provided in the URL",
+  "POST /api/articles/:article_id/comments":{
+    "description": "inserts and responds with a comment object, corresponding with the article_id provided in the URL",
     "queries": [],
     "exampleResponse": {
       "GET /api/topics": {
-        "description": "serves an array of all topics",
+        "description": "serves an array of comments for a specified article_id",
         "queries": [],
         "exampleResponse": {
-          "article_id": 1,
-          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-          "author": "butter_bridge", 
-          "body": "I find this existence challenging", "created_at": 
-          "2020-07-09T20:11:00.000Z", 
-          "title": "Living in the shadow of a great man", "topic": "mitch", 
-          "votes": 100
+          "comment_id": 19,
+          "body": "Test post - insightful comment",
+          "article_id": 4,
+          "author": "icellusedkars",
+          "votes": 0,
+          "created_at": "2024-07-16T11:05:49.233Z"
         }
       }
     }
   },
-  "GET /api": {
-    "description": "serves up a json representation of all the available endpoints of the api",
+  "PATCH /api/comments/:comment_id":{
+    "description": "Updates comment corresponding with the comment_id provided in the parametric endpoint, updates db, then responds with the comment object",
+    "queries": [],
+    "exampleResponse":{
+      "comment_id": 3,
+      "body": "Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.",
+      "article_id": 1,
+      "author": "icellusedkars",
+      "votes": 50,
+      "created_at": "2020-03-01T01:13:00.000Z"
+    }
+  },
+  "DELETE /api/comments/:comment_id":{
+    "description": "deletes and responds with a status cod eof 204 and no content in the response body",
+    "queries": [],
+    "exampleResponse": {}
+  },
+  "GET /api/users":{
+    "description": "Responds with an array of all the user objects",
     "queries": [],
     "exampleResponse": {
-      "GET /api/topics": {
-        "description": "serves an array of all topics",
-        "queries": [],
-        "exampleResponse": {
-          "topics": [{ "slug": "football", "description":     "Footie!" }]
-        }
-      }
+      "username": "butter_bridge",
+      "name": "jonny",
+      "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+    }
+  },
+  "GET /api/users/:username":{
+    "description": "Responds with a user object corresponding with the username provided in the parametric endpoint",
+    "queries": [],
+    "exampleResponse":{
+      "username": "lurker",
+      "name": "do_nothing",
+      "avatar_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
     }
   },
   "GET /api/topics": {
@@ -158,21 +167,12 @@
       "topics": [{ "slug": "football", "description": "Footie!" }]
     }
   },
-  "GET /api/articles": {
-    "description": "serves an array of all articles",
-    "queries": ["author", "topic", "sort_by", "order","title","article_id","created_at","votes","article_img_url","comment_count","limit","p"],
+  "POST /api/topics":{
+    "description": "Inserts topic to the articles table then responds with the comment object",
+    "queries": [],
     "exampleResponse": {
-      "articles": [
-        {
-          "title": "Seafood substitutions are increasing",
-          "topic": "cooking",
-          "author": "weegembump",
-          "body": "Text from the article..",
-          "created_at": "2018-05-30T15:59:13.341Z",
-          "votes": 0,
-          "comment_count": 6
-        }
-      ]
+      "description": "not cats",
+      "slug": "dogs"
     }
   }
 }

@@ -1,4 +1,7 @@
-const { selectAllUsers, selectUserByUsername } = require("../models/usersModels")
+const { 
+    selectAllUsers, 
+    selectUserByUsername 
+} = require("../models/usersModels")
 
 
 function getAllUsers(request,response,next){
@@ -19,4 +22,7 @@ function getUserByUsername(request,response,next){
     })
 }
 
-module.exports = {getAllUsers,getUserByUsername}
+module.exports = {
+    getAllUsers,
+    getUserByUsername
+}

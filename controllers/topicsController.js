@@ -1,4 +1,7 @@
-const { selectTopics, insertTopic } = require('../models/topicsModel.js')
+const { 
+    selectTopics, 
+    insertTopic 
+} = require('../models/topicsModel.js')
 
 function getTopics(request,response,next){
     selectTopics()
@@ -18,4 +21,7 @@ function postTopics(request,response,next){
     })
 }
 
-module.exports = { getTopics,postTopics }
+module.exports = { 
+    getTopics,
+    postTopics 
+}

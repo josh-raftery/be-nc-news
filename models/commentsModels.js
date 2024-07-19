@@ -138,4 +138,10 @@ function deleteCommentByArticleId(article_id){
     ,[article_id])
 }
 
-module.exports = {selectCommentsByArticleId,insertComment,deleteComment,updateComment,deleteCommentByArticleId}
+module.exports = {
+    selectCommentsByArticleId,
+    insertComment,
+    deleteComment,
+    updateComment,
+    deleteCommentByArticleId
+}

@@ -18,7 +18,7 @@
     }
   },
   "GET /api/articles": {
-    "description": "Responds with a .json file, detailing all the articles",
+    "description": "Responds with an array of .json objects, detailing all the articles",
     "queries": ["author", "topic", "sort_by", "order","title","article_id","created_at","votes","article_img_url","comment_count","limit","p"],
     "exampleResponse": {
       "articles": [

@@ -306,6 +306,32 @@ describe("/api/articles/:article_id", () => {
         expect(body.msg).toBe("bad request");
       });
   })
+  test('DELETE:204 Deletes a comment and responds with no content, deleting all comment associated with the article', () => {
+    return request(app)
+    .delete('/api/articles/11')
+    .expect(204)
+    .then(() => {
+      return request(app)
+      .get("/api/articles/11/comments")
+      .expect(404)
+    })
+   })
+   test('DELETE:400 responds with an appropriate status and error message when provided with an invalid comment_id data-type', () => {
+     return request(app)
+       .delete("/api/articles/not-a-number")
+       .expect(400)
+       .then((response) => {
+         expect(response.body.msg).toBe('bad request');
+       });
+   });
+   test('DELETE:404 responds with an appropriate status and error message when given a valid but non-existant comment_id', () => {
+     return request(app)
+       .delete("/api/articles/999")
+       .expect(404)
+       .then((response) => {
+         expect(response.body.msg).toBe('article not found');
+       });
+   });
 });
 describe("/api/articles", () => {
   test("GET:200 sends an array of articles to the client", () => {

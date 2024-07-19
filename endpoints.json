@@ -1,4 +1,9 @@
 {
+  "DELETE /api/articles/:article_id":{
+    "description": "Detesle article, corresponding with id provided in the parametric request, also deletes all comments referencing the article, no response body.",
+    "queries": [],
+    "exampleResponse": {}
+  },
   "POST /api/topics":{
     "description": "Inserts topic to the articles table then responds with the comment object",
     "queries": [],

@@ -128,7 +128,14 @@ function updateComment(inc_votes,comment_id){
         }
         return rows[0]
     })
-
 }
 
-module.exports = {selectCommentsByArticleId,insertComment,deleteComment,updateComment}
+function deleteCommentByArticleId(article_id){
+    return db.query(
+        `DELETE FROM comments 
+        WHERE article_id = $1
+        ;`
+    ,[article_id])
+}
+
+module.exports = {selectCommentsByArticleId,insertComment,deleteComment,updateComment,deleteCommentByArticleId}

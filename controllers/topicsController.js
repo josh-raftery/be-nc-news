@@ -1,10 +1,21 @@
-const { selectTopics } = require('../models/topicsModel.js')
+const { selectTopics, insertTopic } = require('../models/topicsModel.js')
 
-function topicsController(request,response,next){
+function getTopics(request,response,next){
     selectTopics()
     .then((topics) => {
         response.status(200).send({ topics });
     });
 }
 
-module.exports = { topicsController }
+function postTopics(request,response,next){
+    const {slug,description} = request.body
+    insertTopic(slug,description)
+    .then((topic) => {
+        response.status(201).send({ topic });
+    })
+    .catch((err) => {
+        next(err)
+    })
+}
+
+module.exports = { getTopics,postTopics }

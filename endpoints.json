@@ -1,19 +1,24 @@
 {
   "GET /api": {
-    "description": "serves up a json representation of all the available endpoints of the api",
+    "description": "Serves up a json representation of all the available endpoints of the api",
     "queries": [],
     "exampleResponse": {
       "GET /api/topics": {
         "description": "serves an array of all topics",
         "queries": [],
         "exampleResponse": {
-          "topics": [{ "slug": "football", "description":     "Footie!" }]
+          "topics": [
+            {
+              "slug": "football",
+              "description": "Footie!" 
+            }
+          ]
         }
       }
     }
   },
   "GET /api/articles": {
-    "description": "serves an array of all articles",
+    "description": "Responds with a .json file, detailing all the articles",
     "queries": ["author", "topic", "sort_by", "order","title","article_id","created_at","votes","article_img_url","comment_count","limit","p"],
     "exampleResponse": {
       "articles": [
@@ -30,149 +35,169 @@
     }
   },
   "POST /api/articles":{
-    "description": "Inserts article to the carticles table then responds with the comment object",
+    "description": "Inserts article to the articles table then responds with the article .json",
     "queries": [],
     "exampleResponse": {
-      "article_id": 16,
-      "title": "Z",
-      "topic": "mitch",
-      "author": "icellusedkars",
-      "body": "test post",
-      "created_at": "2024-07-18T13:25:03.721Z",
-      "votes": 0,
-      "article_img_url": "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
-      "comment_count": 0
+      "articles":[
+        {
+          "article_id": 16,
+          "title": "Z",
+          "topic": "mitch",
+          "author": "icellusedkars",
+          "body": "test post",
+          "created_at": "2024-07-18T13:25:03.721Z",
+          "votes": 0,
+          "article_img_url": "https://images.pexels.com/photos/97050/pexels-photo-97050.jpeg?w=700&h=700",
+          "comment_count": 0
+        }
+      ]
     }
   },
   "GET /api/articles/:article_id": {
-    "description": "serves up an article object, corresponding with the article_id provided in the URL",
+    "description": "Responds with an article .json, corresponding with the id provided in the URL",
     "queries": [],
     "exampleResponse": {
       "GET /api/topics": {
         "description": "serves an array of all topics",
         "queries": [],
         "exampleResponse": {
-          "article_id": 1,
-          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-          "author": "butter_bridge", 
-          "body": "I find this existence challenging", "created_at": 
-          "2020-07-09T20:11:00.000Z", 
-          "title": "Living in the shadow of a great man", "topic": "mitch", 
-          "votes": 100
+          "article": {
+            "article_id": 2,
+            "title": "The Rise Of Thinking Machines: How IBM's Watson Takes On The World",
+            "topic": "coding",
+            "author": "jessjelly",
+            "body": "Many people know Watson as the IBM-developed cognitive super computer that won the Jeopardy! gameshow in 2011. In truth, Watson is not actually a computer but a set of algorithms and APIs, and since winning TV fame (and a $1 million prize) IBM has put it to use tackling tough problems in every industry from healthcare to finance. Most recently, IBM has announced several new partnerships which aim to take things even further, and put its cognitive capabilities to use solving a whole new range of problems around the world.",
+            "created_at": "2020-05-14T01:02:00.000Z",
+            "votes": 0,
+            "article_img_url": "https://images.pexels.com/photos/373543/pexels-photo-373543.jpeg?w=700&h=700",
+          "comment_count": 6
+          }
         }
       }
     }
   },
   "PATCH /api/articles/article_id":{
-    "description": "updates and responds with an article object, corresponding with the article_id provided in the URL",
+    "description": "Updates and responds with an article object, corresponding with the id provided in the URL",
     "queries": [],
     "exampleResponse": {
       "GET /api/topics": {
         "description": "serves an array of comments for a specified article_id",
         "queries": [],
         "exampleResponse": {
-          "article_id": 1,
-          "title": "Living in the shadow of a great man",
-          "topic": "mitch",
-          "author": "butter_bridge",
-          "body": "I find this existence challenging",
-          "created_at": "2020-07-09T20:11:00.000Z",
-          "votes": 101,
-          "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
-          "comment_count": 11
+          "article":{
+            "article_id": 1,
+            "title": "Living in the shadow of a great man",
+            "topic": "mitch",
+            "author": "butter_bridge",
+            "body": "I find this existence challenging",
+            "created_at": "2020-07-09T20:11:00.000Z",
+            "votes": 101,
+            "article_img_url": "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
+            "comment_count": 11
+          }
         }
       }
     }
   },
   "DELETE /api/articles/:article_id":{
-    "description": "Detesle article, corresponding with id provided in the parametric request, also deletes all comments referencing the article, no response body.",
+    "description": "Deletes an article, corresponding with the id provided in the parametric request, also deletes all comments referencing the article, no .json response.",
     "queries": [],
     "exampleResponse": {}
   },
   "GET /api/articles/:article_id/comments": {
-    "description": "serves up an article object, corresponding with the article_id provided in the URL",
+    "description": "Responds with a .json of an article, corresponding with the id provided in the URL",
     "queries": [],
     "exampleResponse": {
-      "GET /api/topics": {
-        "description": "serves an array of comments for a specified article_id",
-        "queries": ["limit","p"],
-        "exampleResponse": {
-          "comment_id": 5,
-          "body": "I hate streaming noses",
-          "article_id": 1,
-          "author": "icellusedkars",
-          "votes": 0,
-          "created_at": "2020-11-03T21:00:00.000Z"
-        }
+      "article": {
+        "article_id": 4,
+        "title": "Making sense of Redux",
+        "topic": "coding",
+        "author": "jessjelly",
+        "body": "When I first started learning React, I remember reading lots of articles about the different technologies associated with it. In particular, this one article stood out. It mentions how confusing the ecosystem is, and how developers often feel they have to know ALL of the ecosystem before using React. And as someone who’s used React daily for the past 8 months or so, I can definitely say that I’m still barely scratching the surface in terms of understanding how the entire ecosystem works! But my time spent using React has given me some insight into when and why it might be appropriate to use another technology — Redux (a variant of the Flux architecture).",
+        "created_at": "2020-09-11T21:12:00.000Z",
+        "votes": 0,
+        "article_img_url": "https://images.pexels.com/photos/4974912/pexels-photo-4974912.jpeg?w=700&h=700",
+        "comment_count": 9
       }
     }
   },
   "POST /api/articles/:article_id/comments":{
-    "description": "inserts and responds with a comment object, corresponding with the article_id provided in the URL",
+    "description": "Inserts and responds with a comment .json, corresponding with the id provided in the URL",
     "queries": [],
     "exampleResponse": {
-      "GET /api/topics": {
-        "description": "serves an array of comments for a specified article_id",
-        "queries": [],
-        "exampleResponse": {
-          "comment_id": 19,
-          "body": "Test post - insightful comment",
+      "comments": [
+        {
+          "comment_id": 2,
+          "body": "Nobis consequatur animi. Ullam nobis quaerat voluptates veniam.",
           "article_id": 4,
-          "author": "icellusedkars",
-          "votes": 0,
-          "created_at": "2024-07-16T11:05:49.233Z"
+          "author": "grumpy19",
+          "votes": 7,
+          "created_at": "2020-01-01T15:02:00.000Z"
         }
+      ]
+    }         
+  },
+  "PATCH /api/comments/:comment_id":{
+    "description": "Updates comment corresponding with the id provided in the parametric endpoint, updates db, then responds with the comment .json",
+    "queries": [],
+    "exampleResponse":{
+      "comment": {
+        "comment_id": 3,
+        "body": "Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.",
+        "article_id": 1,
+        "author": "icellusedkars",
+        "votes": 50,
+        "created_at": "2020-03-01T01:13:00.000Z"
       }
     }
   },
-  "PATCH /api/comments/:comment_id":{
-    "description": "Updates comment corresponding with the comment_id provided in the parametric endpoint, updates db, then responds with the comment object",
-    "queries": [],
-    "exampleResponse":{
-      "comment_id": 3,
-      "body": "Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.",
-      "article_id": 1,
-      "author": "icellusedkars",
-      "votes": 50,
-      "created_at": "2020-03-01T01:13:00.000Z"
-    }
-  },
   "DELETE /api/comments/:comment_id":{
-    "description": "deletes and responds with a status cod eof 204 and no content in the response body",
+    "description": "Deletes comment and responds with a status code of 204 and no content in the .json",
     "queries": [],
     "exampleResponse": {}
   },
   "GET /api/users":{
-    "description": "Responds with an array of all the user objects",
+    "description": "Responds with an array .json objects containing all of the user data",
     "queries": [],
     "exampleResponse": {
-      "username": "butter_bridge",
-      "name": "jonny",
-      "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+      "users":{
+        "username": "butter_bridge",
+        "name": "jonny",
+        "avatar_url": "https://www.healthytherapies.com/wp-content/uploads/2016/06/Lime3.jpg"
+      }
     }
   },
   "GET /api/users/:username":{
-    "description": "Responds with a user object corresponding with the username provided in the parametric endpoint",
+    "description": "Responds with a user .json corresponding with the username provided in the parametric endpoint",
     "queries": [],
     "exampleResponse":{
-      "username": "lurker",
-      "name": "do_nothing",
-      "avatar_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
+      "user":{
+        "username": "lurker",
+        "name": "do_nothing",
+        "avatar_url": "https://www.golenbock.com/wp-content/uploads/2015/01/placeholder-user.png"
+      }
     }
   },
   "GET /api/topics": {
-    "description": "serves an array of all topics",
+    "description": "Responds with an array of .json objects containing all the topics",
     "queries": [],
     "exampleResponse": {
-      "topics": [{ "slug": "football", "description": "Footie!" }]
+      "topics": [
+        { 
+          "slug": "football", 
+          "description": "Footie!" 
+        }
+      ]
     }
   },
   "POST /api/topics":{
     "description": "Inserts topic to the articles table then responds with the comment object",
     "queries": [],
     "exampleResponse": {
-      "description": "not cats",
-      "slug": "dogs"
+      "topic":{
+        "description": "not cats",
+        "slug": "dogs"
+      }
     }
   }
 }

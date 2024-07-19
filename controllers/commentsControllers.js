@@ -1,4 +1,8 @@
-const { selectCommentsByArticleId, insertComment, deleteComment, updateComment } = require("../models/commentsModels")
+const { selectCommentsByArticleId, 
+    insertComment, 
+    deleteComment, 
+    updateComment 
+} = require("../models/commentsModels")
 
 function getCommentsByArticleId(request,response,next){
     const {article_id} = request.params
@@ -47,4 +51,9 @@ function patchComment(request,response,next){
      })
 }
 
-module.exports = {getCommentsByArticleId,postComment,removeComment,patchComment}
+module.exports = {
+    getCommentsByArticleId,
+    postComment,
+    removeComment,
+    patchComment
+}

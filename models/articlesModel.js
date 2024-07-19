@@ -1,6 +1,6 @@
 const db = require("../db/connection.js");
 const { checkArticleIdExists } = require("../db/seeds/utils.js");
-const { deleteComment, deleteCommentByArticleId } = require("./commentsModels.js");
+const { deleteCommentByArticleId } = require("./commentsModels.js");
 
 function selectArticlesById(article_id){
     return db.query( 
@@ -213,4 +213,10 @@ function deleteArticle(article_id){
     })
 }
 
-module.exports = {selectAllArticles,selectArticlesById,updateArticle,insertArticle,deleteArticle}
+module.exports = {
+    selectAllArticles,
+    selectArticlesById,
+    updateArticle,
+    insertArticle,
+    deleteArticle
+}

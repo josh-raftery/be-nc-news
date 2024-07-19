@@ -1,4 +1,9 @@
-const { selectArticlesById, selectAllArticles, updateArticle, insertArticle, deleteArticle} = require("../models/articlesModel")
+const { selectArticlesById, 
+    selectAllArticles, 
+    updateArticle, 
+    insertArticle, 
+    deleteArticle
+} = require("../models/articlesModel")
 
 function getArticleById(request,response,next){
     const {article_id} = request.params
@@ -59,4 +64,10 @@ function removeArticle(request,response,next){
     })
 }
 
-module.exports = {getArticleById,getAllArticles,patchArticle,postArticle,removeArticle}
+module.exports = {
+    getArticleById,
+    getAllArticles,
+    patchArticle,
+    postArticle,
+    removeArticle
+}

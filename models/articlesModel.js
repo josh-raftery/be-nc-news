@@ -1,4 +1,6 @@
 const db = require("../db/connection.js");
+const { checkArticleIdExists } = require("../db/seeds/utils.js");
+const { deleteComment, deleteCommentByArticleId } = require("./commentsModels.js");
 
 function selectArticlesById(article_id){
     return db.query( 
@@ -191,4 +193,24 @@ function insertArticle(requestBody,author,title,body,topic,article_img_url){
     })
 }
 
-module.exports = {selectAllArticles,selectArticlesById,updateArticle,insertArticle}
+function deleteArticle(article_id){
+    return checkArticleIdExists(article_id)
+    .then((exists) => {
+        if(!exists){
+            return Promise.reject({
+                status: 404,
+                msg: "article not found"
+            })
+        }
+        return deleteCommentByArticleId(article_id)
+    })
+    .then(() => {
+        return db.query(
+            `DELETE FROM articles 
+            WHERE article_id = $1
+            ;`
+        ,[article_id])
+    })
+}
+
+module.exports = {selectAllArticles,selectArticlesById,updateArticle,insertArticle,deleteArticle}

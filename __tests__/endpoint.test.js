@@ -236,7 +236,7 @@ describe("/api/articles", () => {
       .get("/api/articles")
       .expect(200)
       .then(({ body }) => {
-        expect(body.articles.length).toBe(13);
+        
         body.articles.forEach((article) => {
           expect(typeof article.article_id).toBe("number");
           expect(typeof article.title).toBe("string");
@@ -286,8 +286,7 @@ describe("/api/articles", () => {
     return request(app)
     .get("/api/articles?sort_by=title")
     .expect(200)
-    .then(({ body }) => {
-      expect(body.articles.length).toBe(13)
+    .then(({ body }) => {   
       expect(body.articles).toBeSortedBy("title", { descending: true });
     })
   })
@@ -295,8 +294,7 @@ describe("/api/articles", () => {
     return request(app)
     .get("/api/articles?sort_by=topic")
     .expect(200)
-    .then(({ body }) => {
-      expect(body.articles.length).toBe(13)
+    .then(({ body }) => {   
       expect(body.articles).toBeSortedBy("topic", { descending: true });
     })
   })
@@ -304,8 +302,7 @@ describe("/api/articles", () => {
     return request(app)
     .get("/api/articles?sort_by=author")
     .expect(200)
-    .then(({ body }) => {
-      expect(body.articles.length).toBe(13)
+    .then(({ body }) => { 
       expect(body.articles).toBeSortedBy("author", { descending: true });
     })
   })
@@ -313,8 +310,7 @@ describe("/api/articles", () => {
     return request(app)
     .get("/api/articles?sort_by=votes")
     .expect(200)
-    .then(({ body }) => {
-      expect(body.articles.length).toBe(13)
+    .then(({ body }) => { 
       expect(body.articles).toBeSortedBy("votes", { descending: true });
     })
   })
@@ -322,8 +318,7 @@ describe("/api/articles", () => {
     return request(app)
     .get("/api/articles?sort_by=article_img_url")
     .expect(200)
-    .then(({ body }) => {
-      expect(body.articles.length).toBe(13)
+    .then(({ body }) => { 
       expect(body.articles).toBeSortedBy("article_img_url", { descending: true });
     })
   })
@@ -331,8 +326,7 @@ describe("/api/articles", () => {
     return request(app)
     .get("/api/articles?sort_by=article_id")
     .expect(200)
-    .then(({ body }) => {
-      expect(body.articles.length).toBe(13)
+    .then(({ body }) => {    
       expect(body.articles).toBeSortedBy("article_id", { descending: true });
     })
   })
@@ -340,8 +334,7 @@ describe("/api/articles", () => {
     return request(app)
     .get("/api/articles?sort_by=comment_count")
     .expect(200)
-    .then(({ body }) => {
-      expect(body.articles.length).toBe(13)
+    .then(({ body }) => {    
       expect(body.articles).toBeSortedBy("comment_count", { descending: true });
     })
   })
@@ -349,8 +342,7 @@ describe("/api/articles", () => {
     return request(app)
     .get("/api/articles?order=desc")
     .expect(200)
-    .then(({ body }) => {
-      expect(body.articles.length).toBe(13)
+    .then(({ body }) => { 
       expect(body.articles).toBeSortedBy("created_at", { descending: true });
     })
   })
@@ -358,8 +350,7 @@ describe("/api/articles", () => {
     return request(app)
     .get("/api/articles?order=asc&sort_by=title")
     .expect(200)
-    .then(({ body }) => {
-      expect(body.articles.length).toBe(13)
+    .then(({ body }) => {   
       expect(body.articles).toBeSortedBy("title", { descending: false });
     })
   })
@@ -552,8 +543,86 @@ describe("/api/articles", () => {
         expect(response.body.msg).toBe('bad request');
       });
   });
+  test("GET:200 sends an array of articles to the client, the amount specified by the limit query", () => {
+    return request(app)
+      .get("/api/articles?limit=10")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles.length).toBe(10);
+        body.articles.forEach((article) => {
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.comment_count).toBe("number");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.votes).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.total_count).toBe('number')
+        });
+      });
+  });
+  test("GET:200 sends an array of articles to the client, with the queries of limit=10 and p=2, it will respond with items 10-20 (second page)", () => {
+    return request(app)
+      .get("/api/articles?limit=10&p=2")
+      .expect(200)
+      .then(({ body }) => {
+        body.articles.forEach((article) => {
+          expect(typeof article.article_id).toBe("number");
+          expect(typeof article.title).toBe("string");
+          expect(typeof article.topic).toBe("string");
+          expect(typeof article.author).toBe("string");
+          expect(typeof article.comment_count).toBe("number");
+          expect(typeof article.created_at).toBe("string");
+          expect(typeof article.votes).toBe("number");
+          expect(typeof article.article_img_url).toBe("string");
+          expect(typeof article.total_count).toBe('number')
+          expect(body.articles.length).toBe(article.total_count - 10);
+        });
+      });
+  });
+  test("GET:200 sends an array of articles to the client, defaulting to a limit of 10 when no query is specified", () => {
+    return request(app)
+      .get("/api/articles")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.articles).toHaveLength(10)
+      });
+  });
+  test('GET:404 if you specify a page which suprpasses the total_count, get a response of page not found', () => {
+    return request(app)
+      .get("/api/articles?limit=10&p=3")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('page not found')
+      })
+  })
+  test('GET:400 if you specify string in the limit query, not a number - appropriate error message in response', () => {
+    return request(app)
+      .get("/api/articles?limit=ten")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('bad request')
+      })
+  })
+  test('GET:400 if you specify string in the p query, not a number - appropriate error message in response', () => {
+    return request(app)
+      .get("/api/articles?limit=10&p=one")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('bad request')
+      })
+  })
+  test('GET:400 if you specify limit less than one, responds with appropriate error message', () => {
+    return request(app)
+      .get("/api/articles?limit=-1")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('bad request')
+      })
+  })
 })
-describe("/api/articles/:article_id/comments", () => {
+describe("/api/articles/:article_id/commentsthe amount specified by the limit query", () => {
   test("GET:200 sends an array of comments to the client with an article_id of 1", () => {
     return request(app)
       .get("/api/articles/1/comments")

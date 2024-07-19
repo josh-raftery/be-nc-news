@@ -94,7 +94,7 @@
     "exampleResponse": {
       "GET /api/topics": {
         "description": "serves an array of comments for a specified article_id",
-        "queries": [],
+        "queries": ["limit","p"],
         "exampleResponse": {
           "comment_id": 5,
           "body": "I hate streaming noses",

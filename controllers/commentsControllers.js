@@ -2,7 +2,8 @@ const { selectCommentsByArticleId, insertComment, deleteComment, updateComment }
 
 function getCommentsByArticleId(request,response,next){
     const {article_id} = request.params
-    selectCommentsByArticleId(article_id)
+    const {limit,p} = request.query
+    selectCommentsByArticleId(article_id,limit,p)
     .then((comments) => {
         response.status(200).send({comments})
     })

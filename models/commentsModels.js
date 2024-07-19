@@ -1,20 +1,58 @@
 const db = require("../db/connection.js");
 const { checkArticleIdExists } = require("../db/seeds/utils.js");
 
-function selectCommentsByArticleId(article_id){
-    const promisesArray = []
-    promisesArray.push(db.query(
+function selectCommentsByArticleId(article_id,limit = 10,p){
+
+    const offset = limit * (p - 1)
+
+    if(p && !Number(p)){
+        return Promise.reject({
+            status: 400,
+            msg: "bad request"
+        })
+    }
+    if(!Number(limit) || limit <= 0){
+        return Promise.reject({
+            status: 400,
+            msg: "bad request"
+        })
+    }
+
+    let sqlQueryString =
         `SELECT * 
         FROM comments 
         WHERE article_id=$1
         ORDER BY created_at
+        LIMIT ${limit} `
+
+    if(p && p > 1){
+        sqlQueryString += `OFFSET ${offset}`
+    }
+    
+    sqlQueryString += `;`
+
+    let articleIdExists = false;
+
+    return db.query(
+        `SELECT COUNT(article_id)::INT as count
+        FROM comments
+        WHERE article_id = $1
         ;`
-    ,[article_id]))
-
-    promisesArray.push(checkArticleIdExists(article_id))
-
-    return Promise.all(promisesArray)
-    .then(([{rows}, articleIdExists]) => {
+    ,[article_id])
+    .then(({rows}) => {
+        if(rows[0].count < offset){
+            return Promise.reject({
+                status: 404,
+                msg: "page not found"
+            })
+        }
+        return checkArticleIdExists(article_id)
+    })
+    .then((exists) => {
+        articleIdExists = exists
+        return db.query(sqlQueryString,[article_id])
+    })
+    .then(({rows}) => {
         if(rows.length === 0 && !articleIdExists){
             return Promise.reject({
                 status: 404,
@@ -23,6 +61,7 @@ function selectCommentsByArticleId(article_id){
         }
         return rows
     })
+    
 }
 
 function insertComment(request,article_id){

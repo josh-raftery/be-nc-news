@@ -622,13 +622,12 @@ describe("/api/articles", () => {
       })
   })
 })
-describe("/api/articles/:article_id/commentsthe amount specified by the limit query", () => {
+describe("/api/articles/:article_id/comments", () => {
   test("GET:200 sends an array of comments to the client with an article_id of 1", () => {
     return request(app)
       .get("/api/articles/1/comments")
       .expect(200)
       .then(({ body }) => {
-        expect(body.comments.length).toBe(11);
         body.comments.forEach((comment) => {
           expect(comment.article_id).toBe(1);
           expect(typeof comment.comment_id).toBe("number");
@@ -755,6 +754,94 @@ describe("/api/articles/:article_id/commentsthe amount specified by the limit qu
         expect(body.msg).toBe("article not found");
       });
   });
+  test("GET:200 sends an array of comments to the client, the amount specified by the limit query", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=2")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toHaveLength(2);
+        expect(body.comments).toEqual([{
+          comment_id: 9,
+          body: 'Superficially charming',
+          article_id: 1,
+          author: 'icellusedkars',
+          votes: 0,
+          created_at: '2020-01-01T03:08:00.000Z'
+        },
+        {
+          comment_id: 4,
+          body: ' I carry a log — yes. Is it funny to you? It is not to me.',
+          article_id: 1,
+          author: 'icellusedkars',
+          votes: -100,
+          created_at: '2020-02-23T12:01:00.000Z'
+        }])
+    })
+  });
+  test("GET:200 sends an array of comments to the client, with the queries of limit=2 and p=2, it will respond with items 3-4 (second page)", () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=2&p=2")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toHaveLength(2)
+        expect(body.comments).toEqual([{
+          comment_id: 3,
+          body: 'Replacing the quiet elegance of the dark suit and tie with the casual indifference of these muted earth tones is a form of fashion suicide, but, uh, call me crazy — onyou it works.',
+          article_id: 1,
+          author: 'icellusedkars',
+          votes: 100,
+          created_at: '2020-03-01T01:13:00.000Z'
+        },
+        {
+          comment_id: 12,
+          body: 'Massive intercranial brain haemorrhage',
+          article_id: 1,
+          author: 'icellusedkars',
+          votes: 0,
+          created_at: '2020-03-02T07:10:00.000Z'
+        }])
+      });
+  });
+  test("GET:200 sends an array of comments to the client, defaulting to a limit of 10 when no query is specified", () => {
+    return request(app)
+      .get("/api/articles/1/comments")
+      .expect(200)
+      .then(({ body }) => {
+        expect(body.comments).toHaveLength(10)
+      });
+  });
+  test('GET:404 if you specify a page which suprpasses the amount of comments, get a response of page not found', () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=10&p=3")
+      .expect(404)
+      .then(({ body }) => {
+        expect(body.msg).toBe('page not found')
+      })
+  })
+  test('GET:400 if you specify string in the limit query, not a number - appropriate error message in response', () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=ten")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('bad request')
+      })
+  })
+  test('GET:400 if you specify string in the p query, not a number - appropriate error message in response', () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=10&p=one")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('bad request')
+      })
+  })
+  test('GET:400 if you specify limit less than one, responds with appropriate error message', () => {
+    return request(app)
+      .get("/api/articles/1/comments?limit=-1")
+      .expect(400)
+      .then(({ body }) => {
+        expect(body.msg).toBe('bad request')
+      })
+  })
 });
 describe('/api/comments/:comment_id', () => {
   test('DELETE:204 Deletes a comment and responds with no content', () => {

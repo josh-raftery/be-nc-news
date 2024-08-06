@@ -273,6 +273,33 @@ describe("/api/articles/:article_id", () => {
         expect(body.articles).toBeSortedBy("title", { descending: true });
       })
     })
+    test('Response is filtered by topic', () => {
+      return request(app)
+      .get("/api/articles?topic=mitch")
+      .expect(200)
+      .then(({ body }) => {   
+        body.articles.forEach((article) => {
+          expect(article.topic).toBe('mitch')
+        })
+      })
+    })
+    test('Response is filtered by topic', () => {
+      return request(app)
+      .get("/api/articles?topic=ffdsd")
+      .expect(404)
+      .then(({ body }) => {   
+        expect(body.msg).toEqual('page not found')
+      })
+    })
+    test('GET:400 Appropriate error message is returned when a topic with an invalid type is entered', () => {
+      return request(app)
+      .get("/api/articles?topic=1")
+      .expect(400)
+      .then(({ body }) => {   
+        expect(body.msg).toEqual('bad request')
+      })
+    })
+
     test('GET:200 Response is sorted by topic when topic is provided in the query', () => {
       return request(app)
       .get("/api/articles?sort_by=topic")
@@ -351,14 +378,6 @@ describe("/api/articles/:article_id", () => {
       .expect(404)
       .then(({ body }) => {
         expect(body.msg).toEqual('not found')
-      })
-    })
-    test('GET:400 Appropriate error message when a query-type other that "sort_by" or "order is specified"', () => {
-      return request(app)
-      .get("/api/articles?ord=asc")
-      .expect(400)
-      .then(({ body }) => {
-        expect(body.msg).toEqual('bad request')
       })
     })
     test('POST:201 Inserts a new article and responds with the posted article', () => {

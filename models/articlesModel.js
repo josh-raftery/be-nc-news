@@ -26,15 +26,13 @@ function selectArticlesById(article_id){
 
 }
 
-function selectAllArticles(query,sort_by = 'created_at',order = 'DESC',limit = 10, p){ 
+function selectAllArticles(query,sort_by = 'created_at',order = 'DESC',limit = 10, p,topic){ 
 
-    for(let key in query){
-        if(key != 'sort_by' && key != 'order' && key != 'limit' && key != 'p'){
-            return Promise.reject({
-                status: 400,
-                msg: "bad request"
-            })
-        }
+    if(Number(topic)){
+        return Promise.reject({
+            status: 400,
+            msg: "bad request"
+        })
     }
 
     if(p && !Number(p)){
@@ -69,10 +67,17 @@ function selectAllArticles(query,sort_by = 'created_at',order = 'DESC',limit = 1
     articles.votes,
     articles.article_img_url, 
     COUNT(comments.article_id)::INT AS comment_count 
-    FROM articles
-    LEFT JOIN comments
-    ON comments.article_id = articles.article_id
-    GROUP BY articles.article_id 
+    FROM articles  LEFT JOIN comments
+    ON comments.article_id = articles.article_id `
+
+    const topicArray = []
+    if(topic){
+        sqlQueryString += `WHERE topic = $1 `
+        topicArray.push(topic)
+    }
+
+    sqlQueryString += 
+    `GROUP BY articles.article_id
     ORDER BY ${sort_by} ${order}
     LIMIT ${limit} `
 
@@ -90,7 +95,7 @@ function selectAllArticles(query,sort_by = 'created_at',order = 'DESC',limit = 1
     )
     .then(({rows}) => {
         count = rows[0].count
-        return db.query(sqlQueryString)
+        return db.query(sqlQueryString,topicArray)
     })
     .then(({rows}) => {
         if(rows.length === 0){

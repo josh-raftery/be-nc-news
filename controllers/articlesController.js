@@ -18,9 +18,9 @@ function getArticleById(request,response,next){
 
 function getAllArticles(request,response,next){
     const {query} = request
-    const {order,sort_by,limit,p} = request.query
+    const {order,sort_by,limit,p,topic} = request.query
 
-    selectAllArticles(query,sort_by,order,limit,p)
+    selectAllArticles(query,sort_by,order,limit,p,topic)
     .then((articles) => {
         response.status(200).send({articles}) 
     })

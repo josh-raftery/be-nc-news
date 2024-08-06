@@ -274,6 +274,7 @@ describe("/api/articles/:article_id/comments", () => {
         expect(body.comment).toEqual(expectedReponse)
       });
     })
+    
     test('PATCH:200 Updates a comment and responds with the patched comment - handling a decrement of votes not just an increment', () => {
       const requestData = {
         "inc_votes": -50,

@@ -591,6 +591,14 @@ describe("/api/articles/:article_id", () => {
           expect(body.articles).toHaveLength(10)
         });
     });
+    test('GET:200 total_count produces the number of articles that match the queries provided, not the total number of all articles', () => {
+      return request(app)
+        .get("/api/articles?topic=mitch")
+        .expect(200)
+        .then(({ body }) => {
+          expect(body.articles[0].total_count).toBe(14)
+        });
+    })
     test('GET:404 if you specify a page which suprpasses the total_count, get a response of page not found', () => {
       return request(app)
         .get("/api/articles?limit=10&p=3")

@@ -58,6 +58,7 @@ function selectAllArticles(query,sort_by = 'created_at',order = 'DESC',limit = 1
         })
     }
 
+    let queries = ''
     let sqlQueryString = 
     `SELECT articles.author,
     articles.title,
@@ -68,31 +69,36 @@ function selectAllArticles(query,sort_by = 'created_at',order = 'DESC',limit = 1
     articles.article_img_url, 
     COUNT(comments.article_id)::INT AS comment_count 
     FROM articles  LEFT JOIN comments
-    ON comments.article_id = articles.article_id `
+    ON comments.article_id = articles.article_id`
 
     const topicArray = []
     if(topic){
-        sqlQueryString += `WHERE topic = $1 `
+        queries += ` WHERE topic = $1`
         topicArray.push(topic)
     }
 
+    sqlQueryString += queries
     sqlQueryString += 
-    `GROUP BY articles.article_id
+    ` GROUP BY articles.article_id
     ORDER BY ${sort_by} ${order}
-    LIMIT ${limit} `
+    LIMIT ${limit}`
 
     if(p && p > 1){
         const offset = limit * (p - 1)
-        sqlQueryString += `OFFSET ${offset}`
+        sqlQueryString += ` OFFSET ${offset}`
     }
     
     sqlQueryString += `;`
     let count = 0
+
+    let countQueryString = 
+    `SELECT COUNT(article_id)::INT AS count FROM articles`
+
+    countQueryString += queries
+
+    countQueryString += `;`
     
-    return db.query(
-        `SELECT COUNT(article_id)::INT as count
-        FROM articles;`
-    )
+    return db.query(countQueryString,topicArray)
     .then(({rows}) => {
         count = rows[0].count
         return db.query(sqlQueryString,topicArray)

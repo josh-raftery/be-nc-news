@@ -299,8 +299,25 @@ describe("/api/articles/:article_id", () => {
         expect(body.msg).toEqual('bad request')
       })
     })
-
-    test('GET:200 Response is sorted by topic when topic is provided in the query', () => {
+    test('GET:200 Response is filtered by title', () => {
+      return request(app)
+      .get("/api/articles?title=shadow")
+      .expect(200)
+      .then(({ body }) => {   
+        body.articles.forEach((article) => {
+          expect(article.article_id).toBe(1)
+        })
+      })
+    })
+    test('GET:404 Appropriate error message is returned when a non existant topic is provided', () => {
+      return request(app)
+      .get("/api/articles?title=ffdsd")
+      .expect(404)
+      .then(({ body }) => {   
+        expect(body.msg).toEqual('page not found')
+      })
+    })
+   test('GET:200 Response is sorted by topic when topic is provided in the query', () => {
       return request(app)
       .get("/api/articles?sort_by=topic")
       .expect(200)

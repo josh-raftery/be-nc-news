@@ -111,6 +111,14 @@ function deleteComment(comment_id){
 }
 
 function updateComment(inc_votes,comment_id){
+
+    if(!inc_votes){
+        return Promise.reject({
+            status: 400,
+            msg: "bad request"
+        })
+    }
+
     return db.query(
         `UPDATE comments 
         SET votes = (votes + $1)

@@ -357,10 +357,10 @@ describe("/api/articles/:article_id/comments", () => {
     })
     test('PATCH:400 sends an appropriate status and error message when given an invalid request body', () => {
       return request(app)
-        .patch("/api/comments/not-a-number")
+        .patch("/api/comments/5")
         .expect(400)
         .send({
-          "body": "test body"
+          invalid: "test"
         })
         .then(({ body }) => {
           expect(body.msg).toBe("bad request");

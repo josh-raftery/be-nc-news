@@ -309,6 +309,16 @@ describe("/api/articles/:article_id", () => {
         })
       })
     })
+    test('GET:200 Query is case-insensitive', () => {
+      return request(app)
+      .get("/api/articles?title=ShAdoW")
+      .expect(200)
+      .then(({ body }) => {   
+        body.articles.forEach((article) => {
+          expect(article.article_id).toBe(1)
+        })
+      })
+    })
     test('GET:404 Appropriate error message is returned when a non existant topic is provided', () => {
       return request(app)
       .get("/api/articles?title=ffdsd")

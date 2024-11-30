@@ -79,8 +79,8 @@ function selectAllArticles(sort_by = 'created_at',order = 'DESC',limit = 10, p,t
     }
 
     if(title){
-        whereArr.push(`title LIKE ${topic ? '$2' : '$1'} `)
-        topicArray.push(`%${title}%`)
+        whereArr.push(`LOWER (title) LIKE ${topic ? '$2' : '$1'} `)
+        topicArray.push(`%${title.toLowerCase()}%`)
     }
 
     if(whereArr.length > 0){
@@ -103,7 +103,6 @@ function selectAllArticles(sort_by = 'created_at',order = 'DESC',limit = 10, p,t
     sqlQueryString += `;`
     let count = 0
 
-    console.log(sqlQueryString)
 
     let countQueryString = 
     `SELECT COUNT(article_id)::INT AS count FROM articles`
@@ -111,15 +110,12 @@ function selectAllArticles(sort_by = 'created_at',order = 'DESC',limit = 10, p,t
     countQueryString += queries
 
     countQueryString += `;`
-    console.log('before promse')
     return db.query(countQueryString,topicArray)
     .then(({rows}) => {
-        console.log(rows)
         count = rows[0].count
         return db.query(sqlQueryString,topicArray)
     })
     .then(({rows}) => {
-        console.log(rows)
         if(rows.length === 0){
             return Promise.reject({
                 status: 404,

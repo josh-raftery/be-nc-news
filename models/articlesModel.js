@@ -1,4 +1,4 @@
-const db = require("../db/connection.js");
+const db = require("../connection.js");
 const { checkArticleIdExists } = require("../db/seeds/utils.js");
 const { deleteCommentByArticleId } = require("./commentsModels.js");
 

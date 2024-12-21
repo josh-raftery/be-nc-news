@@ -1,4 +1,4 @@
-const db = require("../db/connection.js");
+const db = require("../connection.js");
 const { checkArticleIdExists } = require("../db/seeds/utils.js");
 
 function selectCommentsByArticleId(article_id,limit = 10,p){

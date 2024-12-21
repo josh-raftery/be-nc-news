@@ -5,7 +5,7 @@ const {
   checkArticleIdExists,
 } = require("../db/seeds/utils");
 const seed = require("../db/seeds/seed.js");
-const db = require("../db/connection"); 
+const db = require("../connection"); 
 const data = require("../db/data/test-data");
 
 beforeAll(() => seed(data));

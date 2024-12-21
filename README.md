@@ -26,7 +26,7 @@ Use jest to create tests for the various endpoints and the system will detect th
 
 Add this code to the beginning of any test file requiring queries to the database:
 
-`const db = require("../db/connection");`
+`const db = require("../connection");`
 
 `const seed = require("../db/seeds/seed.js");`
 

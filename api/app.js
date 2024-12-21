@@ -6,7 +6,7 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
-const apiRouter = require("./routers/api-router");
+const apiRouter = require("../routers/api-router");
 
 app.use("/api", apiRouter);
 

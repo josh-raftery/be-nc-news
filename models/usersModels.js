@@ -1,4 +1,4 @@
-const db = require("../db/connection.js");
+const db = require("../connection.js");
 const { checkUsernameExists } = require("../db/seeds/utils.js");
 
 function selectAllUsers() {

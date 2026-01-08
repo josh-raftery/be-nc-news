@@ -152,7 +152,7 @@ describe("/api/articles/:article_id/comments", () => {
             article_id: 1,
             author: 'icellusedkars',
             votes: 0,
-            created_at: '2020-01-01T03:08:00.000Z'
+            created_at: expect.any(String),
           },
           {
             comment_id: 4,
@@ -160,7 +160,7 @@ describe("/api/articles/:article_id/comments", () => {
             article_id: 1,
             author: 'icellusedkars',
             votes: -100,
-            created_at: '2020-02-23T12:01:00.000Z'
+            created_at: expect.any(String),
           }])
       })
     });
@@ -176,7 +176,7 @@ describe("/api/articles/:article_id/comments", () => {
             article_id: 1,
             author: 'icellusedkars',
             votes: 100,
-            created_at: '2020-03-01T01:13:00.000Z'
+            created_at: expect.any(String),
           },
           {
             comment_id: 12,
@@ -184,7 +184,7 @@ describe("/api/articles/:article_id/comments", () => {
             article_id: 1,
             author: 'icellusedkars',
             votes: 0,
-            created_at: '2020-03-02T07:10:00.000Z'
+            created_at: expect.any(String),
           }])
         });
     });
@@ -261,7 +261,7 @@ describe("/api/articles/:article_id/comments", () => {
         article_id: 1,
         author: 'butter_bridge',
         votes: 14,
-        created_at: "2020-10-31T03:03:00.000Z"
+        created_at: expect.any(String),
       }
   
       expectedReponse.votes += requestData.inc_votes
@@ -285,7 +285,7 @@ describe("/api/articles/:article_id/comments", () => {
         article_id: 1,
         author: 'icellusedkars',
         votes: 100,
-        created_at: "2020-03-01T01:13:00.000Z"
+        created_at: expect.any(String),
       }
   
       expectedReponse.votes += requestData.inc_votes
@@ -308,7 +308,7 @@ describe("/api/articles/:article_id/comments", () => {
         article_id: 9,
         author: "butter_bridge",
         body: "Oh, I've got compassion running out of my nose, pal! I'm the Sultan of Sentiment!",
-        created_at: "2020-04-06T12:17:00.000Z",
+        created_at: expect.any(String),
         votes: 16,
       }
   

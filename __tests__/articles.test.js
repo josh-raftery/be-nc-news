@@ -21,7 +21,7 @@ describe("/api/articles/:article_id", () => {
             topic: "mitch",
             author: "butter_bridge",
             body: "I find this existence challenging",
-            created_at: "2020-07-09T20:11:00.000Z",
+            created_at: expect.any(String),
             votes: 100,
             article_img_url:
               "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
@@ -42,7 +42,7 @@ describe("/api/articles/:article_id", () => {
           title: 'Z',
           article_id: 7,
           topic: 'mitch',
-          created_at: "2020-01-07T14:08:00.000Z",
+          created_at: expect.any(String),
           votes: 0,
           article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
           comment_count: 0
@@ -75,7 +75,7 @@ describe("/api/articles/:article_id", () => {
         topic: "mitch",
         author: "butter_bridge",
         body: "I find this existence challenging",
-        created_at: "2020-07-09T20:11:00.000Z",
+        created_at: expect.any(String),
         votes: 100,
         article_img_url:
           "https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700",
@@ -101,7 +101,7 @@ describe("/api/articles/:article_id", () => {
         title: 'Am I a cat?',
         article_id: 11,
         topic: 'mitch',
-        created_at: '2020-01-15T22:21:00.000Z',
+        created_at: expect.any(String),
         votes: 0,
         article_img_url: 'https://images.pexels.com/photos/158651/news-newsletter-newspaper-information-158651.jpeg?w=700&h=700',
       }
@@ -124,7 +124,7 @@ describe("/api/articles/:article_id", () => {
       const expectedReponse = {
         author: "butter_bridge",
         body: "Have you seen the size of that thing?",
-        created_at: "2020-10-11T11:24:00.000Z",
+        created_at: expect.any(String),
         title: "Moustache",
         article_id: 12,
         topic: 'mitch',

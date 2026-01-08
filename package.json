@@ -6,11 +6,11 @@
   "scripts": {
     "setup-dbs": "psql -f ./db/setup.sql",
     "seed": "node ./db/seeds/run-seed.js",
-    "test": "jest --verbose --runInBand",
+    "test": "cross-env TZ=UT jest --verbose --runInBand",
     "prepare": "husky install || true",
     "dev": "nodemon listen.js",
     "start": "node listen.js",
-    "seed-prod": "NODE_ENV=production npm run seed"
+    "seed-prod": "cross-env NODE_ENV=production npm run seed"
   },
   "repository": {
     "type": "git",
@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/northcoders/be-nc-news#readme",
   "devDependencies": {
+    "cross-env": "^10.1.0",
     "husky": "^8.0.3",
     "jest": "^27.5.1",
     "jest-extended": "^2.0.0",

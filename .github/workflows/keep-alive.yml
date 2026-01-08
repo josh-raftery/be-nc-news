@@ -1,0 +1,16 @@
+name: Keep API Alive
+
+on:
+  schedule:
+    - cron: "*/10 * * * *"
+  workflow_dispatch:
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping API
+        run: |
+          curl -f --max-time 10 \
+            -A "github-actions-keepalive" \
+            https://pulsewire-api.vercel.app/api/articles
